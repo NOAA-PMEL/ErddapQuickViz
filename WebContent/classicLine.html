@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>A Chart of PMEL Data</title>
+    <link rel="icon" href="favicon.ico">
+    <link
+            rel="stylesheet"
+            href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript" src="js/dvd.js"></script>
+    <script type="text/javascript">
+
+        // Load the Visualization API and the piechart package.
+        // google.charts.load('current', {'packages':['corechart']});
+        // google.charts.load('current', {'packages':['line, annotationchart']});
+        
+        var lineChart = 'corechart'; // 'corechart', 'line', 'annotationchart'
+        google.charts.load('current', { 'packages': ['map', lineChart],
+            // Note: you will need to get a mapsApiKey for your project.
+            // See: https://developers.google.com/chart/interactive/docs/basic_load_libs#load-settings
+            'mapsApiKey': 'AIzaSyBa59XbO0_RHD1zAh14Dyvc2q4lmQ5AA5c'
+        });
+
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.charts.setOnLoadCallback(drawCharts);
+// http://dunkel.pmel.noaa.gov:8528/erddap/tabledap/saildrone_arctic_2018.dataTable?time%2CBARO_PRES_MEAN%2CTEMP_AIR_MEAN%2CTEMP_CTD_MEAN&time%3E=2018-07-31&time%3C=2018-08-01T11%3A59%3A00Z
+// "http://dunkel.pmel.noaa.gov:8528/erddap/tabledap/saildrone_arctic_2018.dataTable?time%2CBARO_PRES_MEAN%2CTEMP_AIR_MEAN%2CTEMP_CTD_MEAN&time%3E=(now-2 days)";
+//                url:"http://dunkel.pmel.noaa.gov:9290/erddap/tabledap/IrregularTime4_5ca5_f55a_b802.dataTable?time%2CAOD1_1881%2CAOD2_1882%2CAOD3_1883%2CAOD4_1884%2CAOD5_1885%2CAODMZA_1880%2CAODAMS_1879&time%3E=2004-07-21T20%3A00%3A00Z&time%3C=2004-08-10T20%3A48%3A15Z",
+// url:"http://dunkel.pmel.noaa.gov:8528/erddap/tabledap/oap_dashboard_data.dataTable?time%2Cdataset_id%2Corganization%2Cversion%2Cprofile%2Ccast_time%2Ccast_latitude%2Ccast_longitude%2Csample_id%2Clatitude%2Clongitude%2Cstation%2Cniskin%2Cctd_pressure%2Cdepth%2Cctd_temperature%2Cctd_salinity%2Cctd_density%2Cctd_oxygen%2Coxygen%2Cnitrate%2Cnitrite%2Cammonia%2Cphosphate%2Csilicate%2Cctd_chlorophyll%2Calkalinity%2Cinorganic_carbon%2Cph_total%2Csample_number%2Cctd_salinity_qc%2Cctd_oxygen_qc%2Coxygen_qc%2Csilicate_qc%2Cnitrate_qc%2Cnitrite_qc%2Cphosphate_qc%2Cinorganic_carbon_qc%2Calkalinity_qc%2Cph_total_qc%2CWOCE_autocheck&time%3E=2013-09-18T00%3A00%3A00Z&time%3C=2013-09-25T05%3A02%3A46Z",
+//        		 url:"http://dunkel.pmel.noaa.gov:8528/erddap/tabledap/oap_dashboard_data.dataTable?time%2Cctd_pressure%2Cdepth%2Cctd_temperature%2Cctd_salinity%2Cctd_density",
+        // This one shows bad data :
+//                url:"http://dunkel.pmel.noaa.gov:8528/erddap/tabledap/saildrone_arctic_2018.dataTable?time%2CTEMP_AIR_MEAN%2CTEMP_CTD_MEAN&time%3E=2018-07-31&time%3C=2018-08-01T11%3A59%3A00Z&orderByClosest(\"time,2 hours\")",
+//                url:"http://dunkel.pmel.noaa.gov:8528/erddap/tabledap/saildrone_data_2017.dataTable?longitude,latitude&time%3E=2017-07-17T00%3A00%3A00Z&time%3C=2017-09-30T00%3A00%3A00Z&.draw=lines&.color=0x000000&.bgColor=0xffccccff&orderByClosest(\"time,2 hours\")",
+//                url:"http://dunkel.pmel.noaa.gov:8528/erddap/tabledap/saildrone_data_2017.dataTable?longitude,latitude,time&time=max(time))",
+        function drawCharts() {
+            drawMap('1020');
+            drawTsChart('1020');
+            drawMap('1021');
+            drawTsChart('1021');
+            drawMap('1022');
+            drawTsChart('1022');
+            drawMap('1023');
+            drawTsChart('1023');
+    
+        }
+        var icons = {
+        		'1020' : 'images/2x2sq_red.png',
+        		'1021' : 'images/2x2sq_green.png',
+        		'1022' : 'images/2x2sq_light_blue.png',
+        		'1023' : 'images/2x2sq_dark_blue.png',
+        };
+        function drawMap(id) {
+        	
+            var jsonData = $.ajax({
+                url:'http://dunkel.pmel.noaa.gov:8528/erddap/tabledap/saildrone_arctic_2018.dataTable?latitude,longitude,time&trajectory="'+id+'.0"&time>max(time)-300days&orderByClosest("time,1 day")',
+                dataType: "json",
+                async: false
+            }).responseText;
+
+            // Create our data table out of JSON data loaded from server.
+            var data = new google.visualization.DataTable(jsonData);
+            var icon = icons[id];
+            console.log(id + ":" + icon);
+            var moptions = {
+                    zoomLevel: 3,
+                    showLine: true,
+                    lineWeight: 2,
+                    mapType: 'terrain',
+                    useMapTypeControl: true,
+                    showTooltip: true,
+                    icons: {
+                        default: {
+                        	normal: icon
+                        },
+/*                         '1020.0': { normal: 'images/2x2sq_red.png' },
+                        '1021.0': { normal: 'images/2x2sq_green.png' },
+                        '1022.0': { normal: 'images/2x2sq_light_blue.png' },
+                        '1023.0': { normal: 'images/2x2sq_dark_blue.png' } */
+                    },
+                };
+
+            // Instantiate and draw our chart, passing in some options.
+            var chart = new google.visualization.Map(document.getElementById('map_div_'+id));
+            chart.draw(data, moptions);
+        }
+
+        function drawTsChart(id) {
+            var jsonData = $.ajax({
+                url:'http://dunkel.pmel.noaa.gov:8528/erddap/tabledap/saildrone_arctic_2018.dataTable?time%2CTEMP_AIR_MEAN%2CTEMP_CTD_MEAN%2CSAL_MEAN&trajectory="'+id+'.0"&time>max(time)-7days&orderByClosest("time,1 hour")',
+/*                url:'http://dunkel.pmel.noaa.gov:8528/erddap/tabledap/saildrone_arctic_2018.dataTable?time%2CTEMP_AIR_MEAN%2CTEMP_CTD_MEAN%2CBARO_PRES_MEAN&trajectory="'+id+'.0"&time>max(time)-7days&orderByClosest("time,1 hour")', */
+                dataType: "json",
+                async: false
+            }).responseText;
+
+        	if ( lineChart == 'line' ) {
+                drawMaterialChart(jsonData, id);
+        	} else if ( lineChart == 'annotationchart' ) {
+        		drawAnnotationChart(jsonData, id);
+        	} else {
+            	drawClassicChart(jsonData, id);
+        	}
+        }
+        
+        function drawClassicChart(jsonData, id) {
+            var classicOptions = {
+            		title: id+'.0',
+                /*     height: */
+            		width: 950,
+            	    series: {
+            	    	0: { targetAxisIndex: 0},
+            	    	1: { targetAxisIndex: 0},
+            	    	2: { targetAxisIndex: 1}/* ,
+            	    	3: { targetAxisIndex: 2} */
+            	    },
+            	    vAxes: {
+            	    	0: { title: 'Temperature' },
+            	    	1: { title: /* 'Pressure' },
+            	    	2: { title: */ 'Salinity' }
+            	    }
+            }
+            // Create our data table out of JSON data loaded from server.
+            var data = new google.visualization.DataTable(jsonData);
+            var chart = new google.visualization.LineChart(document.getElementById('ts_div_'+id));
+            chart.draw(data, classicOptions);
+        }
+        
+        function drawMaterialChart(jsonData, id) {
+        	var materialOptions = {
+    	        chart: {
+    	          title: 'Material Chart'
+    	        },
+    	        width: 900,
+    	        /* height: 500, */
+    	        series: {
+    	          // Gives each series an axis name that matches the Y-axis below.
+    	          0: {axis: 'Temps'},
+    	          1: {axis: 'Temps'},
+    	          2: {axis: 'Salinity'}
+    	        },
+    	        axes: {
+    	          // Adds labels to each axis; they don't have to match the axis names.
+    	          y: {
+    	            Temps: {label: 'Temp (Celsius)'},
+    	            Salinity: {label: 'Salinity'}
+    	          }
+    	        }
+        	};
+            // Create our data table out of JSON data loaded from server.
+            var data = new google.visualization.DataTable(jsonData);
+            var div = document.getElementById('ts_div_'+id);
+            var chart = new google.charts.Line(div);
+            chart.draw(data, materialOptions);
+        }
+        
+        function drawAnnotationChart(jsonData, id) {
+        	var annoOptions = {
+    	        chart: {
+    	          title: 'Annotation Chart'
+    	        },
+    	        width: 900,
+    	        scaleColumns: [,1,2]
+        	};
+            var data = new google.visualization.DataTable(jsonData);
+            var div = document.getElementById('ts_div_'+id);
+            var chart = new google.visualization.AnnotationChart(div);
+            chart.draw(data, annoOptions);
+        }
+
+    </script>
+    <style>
+        hr {
+            height: 1px;
+            width: 100%;
+            background: gray;
+        }
+        .platform_page {
+            display:flex;
+            flex-direction: column;
+        }
+        .platform_title {
+            margin-left: 5px;
+            border: 1px solid gray;
+            width: fit-content;
+            padding: 2px;
+            padding-right: 4px;
+            border-radius: 3px;
+            background-color: #0c8a91;
+            color: white;
+            font-family: Arial Unicode MS, Arial, sans-serif;
+        }
+        .map_chart {
+            flex-grow:1;
+            width: 400px;
+            margin: 5px;
+            border: 1px solid gray;
+        }
+        .ts_chart {
+            margin: 5px;
+            flex-grow:2;
+            border: 1px solid gray;
+        }
+        .chart_set {
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+        }
+        .chart_pair {
+            height: 400px;
+            width: 100%;
+            display: flex;
+        }
+        A.headlink:link  {text-decoration: none; color: white;}
+        A.headlink:visited {text-decoration: none; color: white;}
+        A.headlink:hover {text-decoration: underline; color: white;}
+        A.headlink:active {text-decoration: none; color: white;}
+    </style>
+</head>
+<header class="mdc-toolbar">
+    <div class="mdc-toolbar__row mdc-theme--secondary-bg">
+        <span class="mdc-toolbar__title"><a class="headlink" href="http://dunkel.pmel.noaa.gov:8528/erddap/tabledap/index.html">Saildrone Arctic 2018.</a></span>
+    </div>
+</header>
+<body > <!--class="mdc-typography">  -->
+<main>
+    <div class="chart_set" >
+        <div class="platform_page">
+            <hr/>
+            <div class="platform_title">1020.0</div>
+            <div class="chart_pair">
+                <div class="map_chart" id="map_div_1020"></div>
+                <div class="ts_chart" id="ts_div_1020"></div>
+            </div>
+        </div>
+        <div class="platform_page">
+            <hr/>
+            <div class="platform_title">1021.0</div>
+            <div class="chart_pair">
+                <div class="map_chart" id="map_div_1021"></div>
+                <div class="ts_chart" id="ts_div_1021"></div>
+            </div>
+        </div>
+        <div class="platform_page">
+            <hr/>
+            <div class="platform_title">1022.0</div>
+            <div class="chart_pair">
+                <div class="map_chart" id="map_div_1022"></div>
+                <div class="ts_chart" id="ts_div_1022"></div>
+            </div>
+        </div>
+        <div class="platform_page">
+            <hr/>
+            <div class="platform_title">1023.0</div>
+            <div class="chart_pair">
+                <div class="map_chart" id="map_div_1023"></div>
+                <div class="ts_chart" id="ts_div_1023"></div>
+            </div>
+            <hr/>
+        </div>
+    </div>
+<!--
+    <div class="mdc-layout-grid">
+        <div class="mdc-layout-grid__inner">
+            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+                <div class="mdc-card">
+                    <h2 style="margin: 8px; padding: 0px"  class="mdc-typography--headline">Headline</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mdc-layout-grid">
+        <div class="mdc-layout-grid__inner">
+            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+                <div class="mdc-card map_chart">
+                    <div id="map_div_1020"></div>
+                </div>
+            </div>
+        </div>
+        <div class="mdc-layout-grid__inner">
+            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+                <div class="mdc-card map_chart">
+                    <div id="map_div_1021"></div>
+                </div>
+            </div>
+        </div>
+        <div class="mdc-layout-grid__inner">
+            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+                <div class="mdc-card map_chart">
+                    <div id="map_div_1022"></div>
+                </div>
+            </div>
+        </div>
+        <div class="mdc-layout-grid__inner">
+            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+                <div class="mdc-card map_chart">
+                    <div id="map_div_1023"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+-->
+</main>
+
+<script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+<script>window.mdc.autoInit();</script>
+
+</body>
+</html>
+

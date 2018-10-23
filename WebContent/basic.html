@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript">
+
+        // Load the Visualization API and the piechart package.
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.load('current', {'packages':['annotationchart']});
+        google.charts.load('current', {
+            'packages': ['geochart','map'],
+            // Note: you will need to get a mapsApiKey for your project.
+            // See: https://developers.google.com/chart/interactive/docs/basic_load_libs#load-settings
+            'mapsApiKey': 'AIzaSyBa59XbO0_RHD1zAh14Dyvc2q4lmQ5AA5c'
+        });
+
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.charts.setOnLoadCallback(drawCharts);
+        
+        function drawCharts() {
+            var moptions = {
+                    zoomLevel: 5,
+                    showLine: true,
+                    mapType: 'terrain',
+                    useMapTypeControl: true,
+                    icons: {
+                        default: {
+                            normal: 'images/1pxTransparent.png'
+                        }
+                    },
+                    height: 500
+                };
+            var data = new google.visualization.DataTable(
+//                {"cols":[{"id":"latitude","label":"latitude (degrees_north) ","type":"number"},{"id":"longitude","label":"longitude (degrees_east) ","type":"number"},{"id":"trajectory","label":"trajectory","type":"string"},{"id":"time","label":"time","type":"datetime"}],"rows": [{"c":[{"v":54.3868416},{"v":-170.93969919999998},{"v":"1001.0"},{"v":"Date(2017, 8, 25, 0, 0, 0, 0)"}]},{"c":[{"v":53.7877248},{"v":-171.56298239999998},{"v":"1001.0"},{"v":"Date(2017, 8, 25, 18, 0, 0, 0)"}]},{"c":[{"v":53.7799936},{"v":-171.1788288},{"v":"1001.0"},{"v":"Date(2017, 8, 26, 0, 0, 0, 0)"}]},{"c":[{"v":53.8965056},{"v":-170.0841728},{"v":"1001.0"},{"v":"Date(2017, 8, 26, 12, 0, 0, 0)"}]},{"c":[{"v":53.956576},{"v":-169.60791039999998},{"v":"1001.0"},{"v":"Date(2017, 8, 26, 18, 0, 0, 0)"}]},{"c":[{"v":54.0133248},{"v":-169.1277696},{"v":"1001.0"},{"v":"Date(2017, 8, 27, 0, 0, 0, 0)"}]},{"c":[{"v":54.1452032},{"v":-167.76222719999998},{"v":"1001.0"},{"v":"Date(2017, 8, 27, 18, 0, 0, 0)"}]},{"c":[{"v":54.1732288},{"v":-167.269632},{"v":"1001.0"},{"v":"Date(2017, 8, 28, 0, 0, 0, 0)"}]},{"c":[{"v":54.2064768},{"v":-166.6432384},{"v":"1001.0"},{"v":"Date(2017, 8, 28, 12, 0, 0, 0)"}]},{"c":[{"v":54.143545599999996},{"v":-166.5224448},{"v":"1001.0"},{"v":"Date(2017, 8, 28, 18, 0, 0, 0)"}]},{"c":[{"v":53.9174784},{"v":-166.59778559999998},{"v":"1001.0"},{"v":"Date(2017, 8, 29, 0, 0, 0, 0)"}]},{"c":[{"v":53.8466944},{"v":-166.5896704},{"v":"1001.0"},{"v":"Date(2017, 8, 29, 18, 0, 0, 0)"}]},{"c":[{"v":53.844499199999994},{"v":-166.5782784},{"v":"1001.0"},{"v":"Date(2017, 8, 29, 21, 0, 0, 0)"}]} ]}
+//                {"cols":[{"id":"latitude","label":"latitude (degrees_north) ","type":"number"},{"id":"longitude","label":"longitude (degrees_east) ","type":"number"},{"id":"time","label":"time","type":"datetime"},{"id":"Marker","label":"trajectory","type":"string"}],"rows": [{"c":[{"v":54.3868416},{"v":-170.93969919999998},{"v":"Date(2017, 8, 25, 0, 0, 0, 0)"},{"v":"1001"}]},{"c":[{"v":53.7877248},{"v":-171.56298239999998},{"v":"Date(2017, 8, 25, 18, 0, 0, 0)"},{"v":"1001"}]},{"c":[{"v":53.7799936},{"v":-171.1788288},{"v":"Date(2017, 8, 26, 0, 0, 0, 0)"},{"v":"1001"}]},{"c":[{"v":53.8965056},{"v":-170.0841728},{"v":"Date(2017, 8, 26, 12, 0, 0, 0)"},{"v":"1001"}]},{"c":[{"v":53.956576},{"v":-169.60791039999998},{"v":"Date(2017, 8, 26, 18, 0, 0, 0)"},{"v":"1001"}]},{"c":[{"v":54.0133248},{"v":-169.1277696},{"v":"Date(2017, 8, 27, 0, 0, 0, 0)"},{"v":"1001"}]},{"c":[{"v":54.1452032},{"v":-167.76222719999998},{"v":"Date(2017, 8, 27, 18, 0, 0, 0)"},{"v":"1001"}]},{"c":[{"v":54.1732288},{"v":-167.269632},{"v":"Date(2017, 8, 28, 0, 0, 0, 0)"},{"v":"1001"}]},{"c":[{"v":54.2064768},{"v":-166.6432384},{"v":"Date(2017, 8, 28, 12, 0, 0, 0)"},{"v":"1001"}]},{"c":[{"v":54.143545599999996},{"v":-166.5224448},{"v":"Date(2017, 8, 28, 18, 0, 0, 0)"},{"v":"1001"}]},{"c":[{"v":53.9174784},{"v":-166.59778559999998},{"v":"Date(2017, 8, 29, 0, 0, 0, 0)"},{"v":"1002"}]},{"c":[{"v":53.8466944},{"v":-166.5896704},{"v":"Date(2017, 8, 29, 18, 0, 0, 0)"},{"v":"1002"}]},{"c":[{"v":53.844499199999994},{"v":-166.5782784},{"v":"Date(2017, 8, 29, 21, 0, 0, 0)"},{"v":"1002"}]} ] }
+                  {"cols":[{"id":"latitude","label":"latitude (degrees_north) ","type":"number"},{"id":"longitude","label":"longitude (degrees_east) ","type":"number"},{"id":"time","label":"time","type":"datetime"}],"rows": [{"c":[{"v":54.3868416},{"v":-170.93969919999998},{"v":"Date(2017, 8, 25, 0, 0, 0, 0)"}]},{"c":[{"v":53.7877248},{"v":-171.56298239999998},{"v":"Date(2017, 8, 25, 18, 0, 0, 0)"}]},{"c":[{"v":53.7799936},{"v":-171.1788288},{"v":"Date(2017, 8, 26, 0, 0, 0, 0)"}]},{"c":[{"v":53.8965056},{"v":-170.0841728},{"v":"Date(2017, 8, 26, 12, 0, 0, 0)"}]},{"c":[{"v":53.956576},{"v":-169.60791039999998},{"v":"Date(2017, 8, 26, 18, 0, 0, 0)"}]},{"c":[{"v":54.0133248},{"v":-169.1277696},{"v":"Date(2017, 8, 27, 0, 0, 0, 0)"}]},{"c":[{"v":54.1452032},{"v":-167.76222719999998},{"v":"Date(2017, 8, 27, 18, 0, 0, 0)"}]},{"c":[{"v":54.1732288},{"v":-167.269632},{"v":"Date(2017, 8, 28, 0, 0, 0, 0)"}]},{"c":[{"v":54.2064768},{"v":-166.6432384},{"v":"Date(2017, 8, 28, 12, 0, 0, 0)"}]},{"c":[{"v":54.143545599999996},{"v":-166.5224448},{"v":"Date(2017, 8, 28, 18, 0, 0, 0)"}]},{"c":[{"v":53.9174784},{"v":-166.59778559999998},{"v":"Date(2017, 8, 29, 0, 0, 0, 0)"}]},{"c":[{"v":53.8466944},{"v":-166.5896704},{"v":"Date(2017, 8, 29, 18, 0, 0, 0)"}]},{"c":[{"v":53.844499199999994},{"v":-166.5782784},{"v":"Date(2017, 8, 29, 21, 0, 0, 0)"}]} ] }
+//                  {"cols":[{"id":"latitude","label":"latitude (degrees_north) ","type":"number"},{"id":"longitude","label":"longitude (degrees_east) ","type":"number"},{"id":"time","label":"time","type":"datetime"}],"rows": [{"c":[{"v":54.3868416},{"v":-170.93969919999998},{"v":"Date(2017, 8, 25, 0, 0, 0, 0)"}]},{"c":[{"v":53.7877248},{"v":-171.56298239999998},{"v":"Date(2017, 8, 25, 18, 0, 0, 0)"}]},{"c":[{"v":53.7799936},{"v":-171.1788288},{"v":"Date(2017, 8, 26, 0, 0, 0, 0)"}]},{"c":[{"v":53.8965056},{"v":-170.0841728},{"v":"Date(2017, 8, 26, 12, 0, 0, 0)"}]},{"c":[{"v":53.956576},{"v":-169.60791039999998},{"v":"Date(2017, 8, 26, 18, 0, 0, 0)"}]},{"c":[{"v":54.0133248},{"v":-169.1277696},{"v":"Date(2017, 8, 27, 0, 0, 0, 0)"}]},{"c":[{"v":54.1452032},{"v":-167.76222719999998},{"v":"Date(2017, 8, 27, 18, 0, 0, 0)"}]},{"c":[{"v":54.1732288},{"v":-167.269632},{"v":"Date(2017, 8, 28, 0, 0, 0, 0)"}]},{"c":[{"v":54.2064768},{"v":-166.6432384},{"v":"Date(2017, 8, 28, 12, 0, 0, 0)"}]},{"c":[{"v":54.143545599999996},{"v":-166.5224448},{"v":"Date(2017, 8, 28, 18, 0, 0, 0)"}]},{"c":[{"v":53.9174784},{"v":-166.59778559999998},{"v":"Date(2017, 8, 29, 0, 0, 0, 0)"}]},{"c":[{"v":53.8466944},{"v":-166.5896704},{"v":"Date(2017, 8, 29, 18, 0, 0, 0)"}]},{"c":[{"v":53.844499199999994},{"v":-166.5782784},{"v":"Date(2017, 8, 29, 21, 0, 0, 0)"}]} ] }
+            );
+            // Instantiate and draw our chart, passing in some options.
+            // var chart = new google.visualization.Map(document.getElementById('chart_div'));
+            // chart.draw(data, moptions);
+            var chart = new google.visualization.ChartWrapper({
+                chartType: 'Map',
+                containerId: 'chart_div',
+                dataTable: data,
+                options: {
+                    icons: {
+                        default: {
+                            normal: '/images/1pxTransparent.png'
+                        }
+                    },
+                    height: 500,
+                    'useMapTypeControl': 'true',
+                    'showTooltip': 'true',
+                    'mapType':'terrain',
+                    'showInfoWindow': 'true',
+                    'showLine': true,
+                    'lineWeight': 2
+                }
+            });
+            chart.draw();
+        }
+        
+    </script>
+    <style>
+        .my-card-height {
+            height: 500px;
+            width: 500px;
+        }
+        A.headlink:link  {text-decoration: none; color: white;}
+        A.headlink:visited {text-decoration: none; color: white;}
+        A.headlink:hover {text-decoration: underline; color: white;}
+        A.headlink:active {text-decoration: none; color: white;}
+    </style>
+    
+</head>
+<body>
+<img alt="" src="/images/5x5px_point.gif"/>
+    <div class="my-card-height" id="chart_div"></div>
+    
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <script>window.mdc.autoInit();</script>
+    
+</body>
+</html>
